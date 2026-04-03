@@ -1,0 +1,163 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1>Protein-Protein Interaction Network</h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 1200px;
+                 background-color: oldlace;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"borderWidth": 3, "color": "lightcoral", "font": {"color": "saddlebrown", "face": "Arial", "size": 18}, "id": "TAF4", "label": "TAF4", "shape": "dot", "size": 30.8, "title": "TAF4\nDegree centrality: 0.400\nBetweenness centrality: 0.022\nClustering coefficient: 0.667\nHub score: 0.400"}, {"borderWidth": 3, "color": "lightcoral", "font": {"color": "saddlebrown", "face": "Arial", "size": 18}, "id": "ZDHHC17", "label": "ZDHHC17", "shape": "dot", "size": 24.4, "title": "ZDHHC17\nDegree centrality: 0.200\nBetweenness centrality: 0.000\nClustering coefficient: 1.000\nHub score: 0.200"}, {"borderWidth": 3, "color": "lightcoral", "font": {"color": "saddlebrown", "face": "Arial", "size": 18}, "id": "TP53", "label": "TP53", "shape": "dot", "size": 40.400000000000006, "title": "TP53\nDegree centrality: 0.700\nBetweenness centrality: 0.126\nClustering coefficient: 0.429\nHub score: 0.700"}, {"borderWidth": 3, "color": "lightcoral", "font": {"color": "saddlebrown", "face": "Arial", "size": 18}, "id": "CREBBP", "label": "CREBBP", "shape": "dot", "size": 30.8, "title": "CREBBP\nDegree centrality: 0.400\nBetweenness centrality: 0.007\nClustering coefficient: 0.833\nHub score: 0.400"}, {"borderWidth": 3, "color": "lightcoral", "font": {"color": "saddlebrown", "face": "Arial", "size": 18}, "id": "HTT", "label": "HTT", "shape": "dot", "size": 50.0, "title": "HTT\nDegree centrality: 1.000\nBetweenness centrality: 0.500\nClustering coefficient: 0.289\nHub score: 1.000"}, {"borderWidth": 3, "color": "lightcoral", "font": {"color": "saddlebrown", "face": "Arial", "size": 18}, "id": "OPTN", "label": "OPTN", "shape": "dot", "size": 24.4, "title": "OPTN\nDegree centrality: 0.200\nBetweenness centrality: 0.000\nClustering coefficient: 1.000\nHub score: 0.200"}, {"borderWidth": 3, "color": "lightcoral", "font": {"color": "saddlebrown", "face": "Arial", "size": 18}, "id": "ITPR1", "label": "ITPR1", "shape": "dot", "size": 30.8, "title": "ITPR1\nDegree centrality: 0.400\nBetweenness centrality: 0.007\nClustering coefficient: 0.833\nHub score: 0.400"}, {"borderWidth": 3, "color": "lightcoral", "font": {"color": "saddlebrown", "face": "Arial", "size": 18}, "id": "REST", "label": "REST", "shape": "dot", "size": 24.4, "title": "REST\nDegree centrality: 0.200\nBetweenness centrality: 0.000\nClustering coefficient: 1.000\nHub score: 0.200"}, {"borderWidth": 3, "color": "lightcoral", "font": {"color": "saddlebrown", "face": "Arial", "size": 18}, "id": "GAPDH", "label": "GAPDH", "shape": "dot", "size": 34.0, "title": "GAPDH\nDegree centrality: 0.500\nBetweenness centrality: 0.026\nClustering coefficient: 0.700\nHub score: 0.500"}, {"borderWidth": 3, "color": "lightcoral", "font": {"color": "saddlebrown", "face": "Arial", "size": 18}, "id": "HAP1", "label": "HAP1", "shape": "dot", "size": 30.8, "title": "HAP1\nDegree centrality: 0.400\nBetweenness centrality: 0.022\nClustering coefficient: 0.667\nHub score: 0.400"}, {"color": "thistle", "font": {"color": "saddlebrown", "face": "Arial", "size": 18}, "id": "F8A2", "label": "F8A2", "shape": "dot", "size": 24.4, "title": "F8A2\nDegree centrality: 0.200\nBetweenness centrality: 0.000\nClustering coefficient: 1.000"}]);
+                  edges = new vis.DataSet([{"color": "lightgrey", "from": "TAF4", "title": "Interaction score: 0.412", "to": "ZDHHC17", "value": 1, "width": 0.412}, {"color": "lightgrey", "from": "TAF4", "title": "Interaction score: 0.250", "to": "TP53", "value": 1, "width": 0.25}, {"color": "lightgrey", "from": "TAF4", "title": "Interaction score: 0.541", "to": "CREBBP", "value": 1, "width": 0.541}, {"color": "lightgrey", "from": "TAF4", "title": "Interaction score: 0.948", "to": "HTT", "value": 1, "width": 0.948}, {"color": "lightgrey", "from": "ZDHHC17", "title": "Interaction score: 0.986", "to": "HTT", "value": 1, "width": 0.986}, {"color": "lightgrey", "from": "TP53", "title": "Interaction score: 0.996", "to": "CREBBP", "value": 1, "width": 0.996}, {"color": "lightgrey", "from": "TP53", "title": "Interaction score: 0.498", "to": "OPTN", "value": 1, "width": 0.498}, {"color": "lightgrey", "from": "TP53", "title": "Interaction score: 0.349", "to": "ITPR1", "value": 1, "width": 0.349}, {"color": "lightgrey", "from": "TP53", "title": "Interaction score: 0.373", "to": "REST", "value": 1, "width": 0.373}, {"color": "lightgrey", "from": "TP53", "title": "Interaction score: 0.827", "to": "GAPDH", "value": 1, "width": 0.827}, {"color": "lightgrey", "from": "TP53", "title": "Interaction score: 0.989", "to": "HTT", "value": 1, "width": 0.989}, {"color": "lightgrey", "from": "CREBBP", "title": "Interaction score: 0.426", "to": "GAPDH", "value": 1, "width": 0.426}, {"color": "lightgrey", "from": "CREBBP", "title": "Interaction score: 0.982", "to": "HTT", "value": 1, "width": 0.982}, {"color": "lightgrey", "from": "HTT", "title": "Interaction score: 0.944", "to": "ITPR1", "value": 1, "width": 0.944}, {"color": "lightgrey", "from": "HTT", "title": "Interaction score: 0.911", "to": "REST", "value": 1, "width": 0.911}, {"color": "lightgrey", "from": "HTT", "title": "Interaction score: 0.997", "to": "HAP1", "value": 1, "width": 0.997}, {"color": "lightgrey", "from": "HTT", "title": "Interaction score: 0.987", "to": "GAPDH", "value": 1, "width": 0.987}, {"color": "lightgrey", "from": "HTT", "title": "Interaction score: 0.990", "to": "OPTN", "value": 1, "width": 0.99}, {"color": "lightgrey", "from": "HTT", "title": "Interaction score: 0.974", "to": "F8A2", "value": 1, "width": 0.974}, {"color": "lightgrey", "from": "GAPDH", "title": "Interaction score: 0.421", "to": "ITPR1", "value": 1, "width": 0.421}, {"color": "lightgrey", "from": "GAPDH", "title": "Interaction score: 0.407", "to": "HAP1", "value": 1, "width": 0.407}, {"color": "lightgrey", "from": "ITPR1", "title": "Interaction score: 0.556", "to": "HAP1", "value": 1, "width": 0.556}, {"color": "lightgrey", "from": "HAP1", "title": "Interaction score: 0.583", "to": "F8A2", "value": 1, "width": 0.583}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "barnesHut": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.2,
+            "damping": 0.95,
+            "gravitationalConstant": -22000,
+            "springConstant": 0.03,
+            "springLength": 140
+        },
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
