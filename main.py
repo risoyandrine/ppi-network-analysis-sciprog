@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 
 from enrichment import go_enrichment, go_summary
-from fetch_data import fetch_string_data
+from fetch_data import fetch_string_data, fetch_gene_id
 from network import (calc_betweenness_centr, calc_clustering_coefficient, calc_degree_centrality, create_graph, find_hub_proteins, get_network_properties, network_summary)
 from visualization import plot_GOenrich, plot_network
 
@@ -39,6 +39,15 @@ def main():
     clustering = calc_clustering_coefficient(graph)
     hub_proteins = find_hub_proteins(degree, num_hubs=num_hubs)
     network_properties = get_network_properties(graph, degree, betweenness, clustering, hub_proteins)
+
+    hub_names = [protein for protein, score in hub_proteins]
+    hub_gene_ids = fetch_gene_id(hub_names, species)
+
+    if hub_gene_ids is not None and not hub_gene_ids.empty:
+        print("\nProtein to Gene ID mapping:")
+        hub_gene_ids["annotation"] = hub_gene_ids["annotation"].str.split(";").str[0]
+        print(hub_gene_ids[["stringId", "preferredName", "annotation"]].to_string(index=False))
+    
 
     network_summary(graph, degree, betweenness, clustering, hub_proteins)
 

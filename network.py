@@ -1,5 +1,4 @@
-#make functions to calculate the key properties
-#starting off with calculating degree centrality
+# make functions to calculate the key properties
 # we define the nodes as the proteins and the edges between them as their connection
 
 import networkx as nx
@@ -46,9 +45,9 @@ def get_network_properties(graph, degree, betweenness, clustering, hub_proteins)
 
 #then we print a summary of the network properties
 def network_summary(graph, degree, betweenness, clustering, hub_proteins): 
-   print(f"Network graph for the gene of interest:")
-   print(f"Number of nodes(proteins): {graph.number_of_nodes()}")
-   print(f"Number of edges(connections): {graph.number_of_edges()}")
+   print(f"\nNetwork graph for the gene of interest:")
+   print(f"\nNumber of nodes(proteins): {graph.number_of_nodes()}")
+   print(f"\nNumber of edges(connections): {graph.number_of_edges()}")
    print(f"\nCalculated degree centrality:")
    for protein, score in sorted(degree.items(), key = lambda x: x[1], reverse = True):
       print(f"{protein}: {score:.3f}")
@@ -59,5 +58,5 @@ def network_summary(graph, degree, betweenness, clustering, hub_proteins):
    for protein, score in sorted(clustering.items(), key = lambda x: x[1], reverse = True):
       print(f"{protein:15}: {score:.3f}")
    print(f"\nHub proteins:")
-   for i, (protein, score) in enumerate(hub_proteins):
+   for i, (protein, score) in enumerate(hub_proteins, 1):
       print(f"{i}. {protein:15}: {score:.3f}")

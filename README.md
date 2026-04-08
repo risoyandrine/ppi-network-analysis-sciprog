@@ -23,7 +23,19 @@ You run the program from the terminal using `main.py`. You have to provide a gen
 ```bash
 python main.py --gene TP53 --threshold 400
 ```
-*(In this example, we use the gene TP53, which is highly connected to cancer biology, and set the interaction score limit to 400. You can also add `--limit` to change how many proteins to get, or `--species` if you are not looking at human data).*
+*(In this example, we use the gene TP53, which is highly connected to cancer biology, and set the interaction score limit to 400. You can also add `--limit` to change how many proteins to get, or `--species` if you are not looking at human data). Below is the arguments that is used in the program:*
+
+## Arguments
+| Argument | Required | Default | Description |
+|---|---|---|---|
+| --gene | Yes | - | Gene symbol (e.g. TP53) |
+| --threshold | Yes | - | Interaction score 0-1000 |
+| --species | No | 9606 | NCBI taxonomy ID |
+| --limit | No | 10 | Max interactions |
+| --num_hubs | No | 10 | Number of hub proteins |
+| --fdr_threshold | No | 0.05 | FDR cutoff for GO |
+| --output | No | ppi_network | Output filename for network plots |
+| --go_output | No | go_enrichment.png | Output filename for GO plot |
 
 ## Output files
 When the script is finished, it automatically generates three visual files in your folder:

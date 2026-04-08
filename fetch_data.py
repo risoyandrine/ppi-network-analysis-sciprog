@@ -25,6 +25,25 @@ def fetch_string_data(gene, threshold, species, network_type, limit):
         print(f"Error: Could not fetch data from STRING database: {response.status_code}")
         return None
 
+def fetch_gene_id(protein_list , species):
+    url = "https://string-db.org/api/json/get_string_ids"
+    # based on the STRING database API documentation we chose the appropriate URL
+
+    # we define the parameters needed for the API request based on the STRING documentation
+    params = {
+        "identifiers": "\r".join(protein_list),
+        "species": species,
+    }
+    # we make the request to the STRING database API
+    response = requests.get(url, params=params)
+
+    if response.status_code == 200: 
+        data = response.json()
+        return pd.DataFrame(data)
+    else: 
+        print(f"Error: Could not fetch data Gene IDs: {response.status_code}")
+        return None
+
 def fetch_go_enrich(hub_proteins, species, background=None):
     url = "https://string-db.org/api/json/enrichment"
     # based on the STRING database API documentation I chose this URL, returns JSON data 
