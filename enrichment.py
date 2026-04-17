@@ -1,25 +1,21 @@
-#we want to perform an go enrichment analysis of the hub proteins obtained
+#next task is to perform an go enrichment analysis of the hub proteins that was found in the network analysis
 
 from fetch_data import fetch_go_enrich
 
+# this function takes the raw dataframe and checks that it is there and not empty before it filters the data based on the false discovery rate threshold. If no significant terms are found it will return none
 def go_enrichment(hub_proteins, species, fdr_threshold, background=None):
-    #get the raw dataframe 
     go_data = fetch_go_enrich(hub_proteins, species, background)
-    #if none, print error and return
     if go_data is None:
         print("Error: Could not fetch GO enrichment data from STRING database")
         return None
-    #filter rows based on the fdr threshold
     go_data = go_data[go_data["fdr"] < fdr_threshold]
-    #filter to only include actual GO terms (Process, Function, Component)
     go_data = go_data[go_data["category"].isin(["Process", "Function", "Component"])]
-    #return the filtered data
     if go_data.empty:
         print("No GO enrichment data found for the given hub proteins and FDR threshold")
         return None
     return go_data
 
-#to make the data more readable, we create a summary of the GO enrichment data
+#to give us a more structured picture of what the enrichment analysis found, it will create a summary of the data
 def go_summary(go_data):
     print("GO Enrichment Analysis:\n")
     print(f"Number of significant GO terms found: {len(go_data)}\n")

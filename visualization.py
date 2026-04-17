@@ -1,4 +1,3 @@
-# we import the necessary libraries
 from math import log10
 from pathlib import Path
 from textwrap import fill
@@ -6,7 +5,7 @@ from textwrap import fill
 import matplotlib.pyplot as plt
 import networkx as nx
 
-# because pyvis is not a standard library, we use a try-except block
+#this is to also let the user make the network graph without having the pyvis library as it is not really a standard library
 try:
     from pyvis.network import Network
 except ImportError:
@@ -28,8 +27,7 @@ go_palette = {
     "Component": "deepskyblue",
 }
 
-#we define the function to plot the network, we do it in two different ways: static and interactive
-#the static plot is a png image, the interactive plot is an html file
+# plotting the network involves both an interactive html file if pyvis is installed, and a standard static PPI network graph in a png form
 
 def plot_network(graph, network_properties, output_path):
     outputs = []
@@ -42,33 +40,29 @@ def plot_network(graph, network_properties, output_path):
 
     return outputs
 
-#we define the interactive plot function, we use pyvis to create an interactive network graph, if pyvis is not installed it will not be created
-
+#this function will give us the interactive graph and we use the pyvis library to create this using the hub proteins that has been defined previously and their network properties
 def plot_network_interactive(graph, network_properties, output_path):
     net = Network(height="1200px", width="100%", bgcolor="oldlace", font_color="saddlebrown")
     net.from_nx(graph)
-# we use the data from the network_properties dictionary from the network_analysis.py file to create the interactive plot
     degree = network_properties["degree"]
     betweenness = network_properties["betweenness"]
     clustering = network_properties["clustering"]
     hub_proteins = network_properties["hub_proteins"]
 
-# we define the hub names and hub scores from the hub_proteins list
     hub_names = {protein for protein, score in hub_proteins}
     hub_scores = {protein: score for protein, score in hub_proteins}
 
-# we iterate over the nodes in the network graph
     for node in net.nodes:
         protein = node["id"]
-        degree_score = degree.get(protein, 0) # get the degree score for the current node, with 0 as default value
-        betweenness_score = betweenness.get(protein, 0) # get the betweenness score for the current node, with 0 as default value
-        clustering_score = clustering.get(protein, 0) # get the clustering score for the current node, with 0 as default value
+        degree_score = degree.get(protein, 0) 
+        betweenness_score = betweenness.get(protein, 0) 
+        clustering_score = clustering.get(protein, 0) 
 
-        node["size"] = 18 + degree_score * 32 # set the size of the node based on the degree score
+        node["size"] = 18 + degree_score * 32 
         node["font"] = {"size": 18, "face": "Arial", "color": network_palette["label"]}
         node["title"] = (
             f"{protein}"
-            f"\nDegree centrality: {degree_score:.3f}" #
+            f"\nDegree centrality: {degree_score:.3f}" 
             f"\nBetweenness centrality: {betweenness_score:.3f}"
             f"\nClustering coefficient: {clustering_score:.3f}"
         )
@@ -80,18 +74,16 @@ def plot_network_interactive(graph, network_properties, output_path):
             node["title"] += f"\nHub score: {score:.3f}"
         else:
             node["color"] = network_palette["node"]
-# we iterate over the edges in the network graph
     for edge in net.edges:
         weight = edge.get("weight") or edge.get("width") or edge.get("value") or 1
         edge["value"] = max(weight, 1)
         edge["color"] = network_palette["edge"]
         edge["title"] = f"Interaction score: {weight:.3f}"
-# we use the barnes_hut algorithm to layout the network graph
     net.barnes_hut(gravity=-22000, central_gravity=0.2, spring_length=140, spring_strength=0.03, damping=0.95)
     output_path = Path(output_path).with_suffix(".html")
     net.write_html(str(output_path))
     
-# pyvis template has a bug with double headers, so we inject our header manually:
+#testing the pipeline, I noticed that the pyvis template has a bug with double headers, so we have to place the header manually:
     with open(output_path, "r", encoding="utf-8") as f:
         html_str = f.read()
     html_str = html_str.replace("<h1></h1>", "<h1>Protein-Protein Interaction Network</h1>", 1)
@@ -100,7 +92,7 @@ def plot_network_interactive(graph, network_properties, output_path):
         
     return output_path
 
-# we define the static plot function
+#this function is instead plotting the static network using standard matplotlib, networkx and the same hub proteins and network properties we found earlier 
 def plot_network_static(graph, network_properties, output_path):
     degree = network_properties["degree"]
     hub_proteins = network_properties["hub_proteins"]
@@ -110,8 +102,8 @@ def plot_network_static(graph, network_properties, output_path):
     fig.patch.set_facecolor(network_palette["background"])
     ax.set_facecolor(network_palette["background"])
 
-    pos = nx.spring_layout(graph, k=2, iterations=200, seed=42) # define the layout of the network graph
-    node_sizes = [500 + degree.get(node, 0) * 2800 for node in graph.nodes()] # set the size of the nodes based on the degree score
+    pos = nx.spring_layout(graph, k=2, iterations=200, seed=42) 
+    node_sizes = [500 + degree.get(node, 0) * 2800 for node in graph.nodes()] 
     node_colors = [network_palette["hub"] if node in hub_names else network_palette["node"] for node in graph.nodes()]
 
 
@@ -127,27 +119,22 @@ def plot_network_static(graph, network_properties, output_path):
     ax.axis("off")
     plt.tight_layout()
 
-# we save the plot as a png file
     output_path = Path(output_path).with_suffix(".png")
     plt.savefig(output_path, dpi=300, bbox_inches="tight", facecolor=fig.get_facecolor())
     plt.close(fig)
     return output_path
 
-# we define the function to plot the GO enrichment
-# we us matplotlib to create a bar chart of the GO enrichment results to avoid any more dependencies
 
+#this last function is to plot the enrichment analysis results we obtained for our network, again using matplotlib
 def plot_GOenrich(go_data, output_png, top_n=10):
-    # we check if the go_data is empty
     if go_data is None or go_data.empty:
         raise ValueError("go_data must contain at least one enrichment result")
-    # we take the top n results
     plot_data = go_data.nsmallest(top_n, "fdr").copy()
     plot_data["score"] = plot_data["fdr"].map(lambda value: -log10(max(value, 1e-300)))
     plot_data = plot_data.sort_values("score")
     plot_data["color"] = plot_data["category"].map(go_palette).fillna("grey")
     plot_data["short_label"] = plot_data.apply(lambda row: format_enrichment_label(row["description"], row["category"]), axis=1)
 
-    # we define the figure and the axes
 
     fig_height = max(5.5, 1.0 * len(plot_data))
     fig, ax = plt.subplots(figsize=(11.5, fig_height))
@@ -161,7 +148,6 @@ def plot_GOenrich(go_data, output_png, top_n=10):
     ax.grid(axis="x", linestyle="--", linewidth=0.7, color="lightgrey", alpha=0.9)
     ax.set_axisbelow(True)
 
-# we remove the top and right spines
     for spine in ["top", "right"]:
         ax.spines[spine].set_visible(False)
     ax.spines["left"].set_color("lightgrey")
@@ -176,13 +162,11 @@ def plot_GOenrich(go_data, output_png, top_n=10):
         ax.legend(handles=legend_handles, title="Category", frameon=False, loc="lower right")
 
     plt.tight_layout()
-# we save the plot as a png file
     output_path = Path(output_png)
     fig.savefig(output_path, dpi=300, bbox_inches="tight", facecolor=fig.get_facecolor())
     plt.close(fig)
     return output_path
 
-# we define the function to format the enrichment label
 def format_enrichment_label(description, category, max_length=58):
     compact_description = " ".join(str(description).split())
     if len(compact_description) > max_length:

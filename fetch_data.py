@@ -1,11 +1,10 @@
 import requests 
 import pandas as pd
 
+#the function below will give us the interaction data from the STRING database, the parameters follows the STRING documentation 
 def fetch_string_data(gene, threshold, species, network_type, limit):
     url = "https://string-db.org/api/json/network"
-    # based on the STRING database API documentation I chose this URL, returns JSON data 
 
-    # we define the parameters needed for the API request based on the STRING documentation
     params = {
         "identifiers": gene,
         "required_score": threshold,
@@ -14,7 +13,6 @@ def fetch_string_data(gene, threshold, species, network_type, limit):
         "limit": limit, 
     }
 
-    # we make the request to the STRING database API
     response = requests.get(url, params=params)
 
     if response.status_code == 200:
@@ -25,16 +23,14 @@ def fetch_string_data(gene, threshold, species, network_type, limit):
         print(f"Error: Could not fetch data from STRING database: {response.status_code}")
         return None
 
+#to later perform the enrichment analysis, the hub proteins will be converted to their gene identifiers
 def fetch_gene_id(protein_list , species):
     url = "https://string-db.org/api/json/get_string_ids"
-    # based on the STRING database API documentation we chose the appropriate URL
 
-    # we define the parameters needed for the API request based on the STRING documentation
     params = {
         "identifiers": "\r".join(protein_list),
         "species": species,
     }
-    # we make the request to the STRING database API
     response = requests.get(url, params=params)
 
     if response.status_code == 200: 
@@ -44,22 +40,21 @@ def fetch_gene_id(protein_list , species):
         print(f"Error: Could not fetch data Gene IDs: {response.status_code}")
         return None
 
+#this function will give the enrichment analysis by sending the previously identified hub proteins to the STRING database
 def fetch_go_enrich(hub_proteins, species, background=None):
     url = "https://string-db.org/api/json/enrichment"
-    # based on the STRING database API documentation I chose this URL, returns JSON data 
 
     proteins = [proteins for proteins, score in hub_proteins]
 
-    # we define the parameters needed for the API request based on the STRING documentation
     params = {
-        "identifiers": "\r".join(proteins),  # STRING expects newline-separated identifiers
+        "identifiers": "\r".join(proteins), 
         "species": species,
     }
-    # we will only include background if provided (custom background set for enrichment)
+    
     if background is not None:
         params["background_string_identifiers"] = "\r".join(background)
-    # we make the request to the STRING database API
-    response = requests.post(url, data=params)  # STRING enrichment endpoint requires POST
+
+    response = requests.post(url, data=params) 
 
     if response.status_code == 200: 
         data = response.json()

@@ -6,7 +6,7 @@ from fetch_data import fetch_string_data, fetch_gene_id
 from network import (calc_betweenness_centr, calc_clustering_coefficient, calc_degree_centrality, create_graph, find_hub_proteins, get_network_properties, network_summary)
 from visualization import plot_GOenrich, plot_network
 
-# we parse terminal argument
+# to start the pipeline the first step is to parse terminal argument
 arg = argparse.ArgumentParser()
 
 arg.add_argument("--gene", type=str, required=True)
@@ -19,12 +19,12 @@ arg.add_argument("--fdr_threshold", type=float, default=0.05)
 arg.add_argument("--output", type=str, default="ppi_network", help="Output filename for the network visualization")
 arg.add_argument("--go_output", type=str, default="go_enrichment.png", help="Output filename for the GO enrichment plot")
 
-# we define a function to parse the arguments
+# the arguments are being parsed using this function
 def parse_arguments():
     args = arg.parse_args()
     return (args.gene, args.threshold, args.species, args.network_type, args.limit, args.num_hubs, args.fdr_threshold, args.output, args.go_output)
 
-# we define the main function, this is where we call the other functions in the correct order and save the outputs to the desired files
+# the main function is where we call the other functions, perform the analysis and save the outputs to the desired files
 def main():
     (gene, threshold, species, network_type, limit, num_hubs, fdr_threshold, output, go_output) = parse_arguments()
     data = fetch_string_data(gene, threshold, species, network_type, limit)
@@ -68,6 +68,6 @@ def main():
     saved_go_path = plot_GOenrich(go_data, go_output_path)
     print(f"Saved GO enrichment plot to {saved_go_path}")
 
-#we run the main function if the script is run directly
+# run the main function if the script is run directly
 if __name__ == "__main__":
     main()
