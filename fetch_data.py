@@ -6,7 +6,7 @@ def fetch_string_data(gene, threshold, species, network_type, limit):
     url = "https://string-db.org/api/json/network"
 
     params = {
-        "identifiers": gene,
+        "identifiers": "\r".join(gene),
         "required_score": threshold,
         "species": species, 
         "network_type": network_type,

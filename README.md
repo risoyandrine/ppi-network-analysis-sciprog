@@ -1,6 +1,6 @@
 # Protein-Protein Interaction (PPI) Network Analysis
 
-This is my Python project for analyzing protein-protein interaction networks (Project 7). The program takes a gene name, fetches interaction data from the STRING database, and builds a network graph. In addition, it runs a Gene Ontology (GO) enrichment analysis to identify what biological processes and functions the proteins in the network may be involved in.
+This is my Python project for analyzing protein-protein interaction networks (Project 7). The program takes one or more gene names, fetches interaction data from the STRING database, and builds a network graph. In addition, it runs a Gene Ontology (GO) enrichment analysis to identify what biological processes and functions the proteins in the network may be involved in.
 
 The structure of the project includes splitting the code into different files as you see below:
 - main.py: This is the main script you run from the terminal.
@@ -16,11 +16,16 @@ pip install networkx matplotlib pyvis pandas requests
 ```
 
 ## How to run the program:
-You may run the program from the terminal using `main.py`. Here you have to provide a gene name and a score threshold for the network connections. Just to provide an example below, the gene TP53 is used and the threshold is set to 400. 
+You may run the program from the terminal using `main.py`. Here you have to provide one or more gene names and a score threshold for the network connections. Just to provide an example below, the gene TP53 is used and the threshold is set to 400. 
 
-**Example run:**
+**Example with a single gene:**
 ```bash
 python main.py --gene TP53 --threshold 400
+```
+
+**Example with multiple genes:**
+```bash
+python main.py --gene TP53 BRCA1 EGFR --threshold 400
 ```
 
 ## Arguments
@@ -28,7 +33,7 @@ Some other arguments in this program are optional and can be changed as wanted b
 
 | Argument | Required | Default | Description |
 |---|---|---|---|
-| --gene | Yes | - | Gene symbol (for example: TP53) |
+| --gene | Yes | - | One or more gene symbols (for example: TP53 BRCA1 EGFR) |
 | --threshold | Yes | - | Interaction score (ranging from 0-1000) |
 | --species | No | 9606 | NCBI taxonomy ID |
 | --limit | No | 10 | The maximum number of interactions |

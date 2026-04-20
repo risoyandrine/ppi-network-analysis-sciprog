@@ -9,7 +9,7 @@ from visualization import plot_GOenrich, plot_network
 # to start the pipeline the first step is to parse terminal argument
 arg = argparse.ArgumentParser()
 
-arg.add_argument("--gene", type=str, required=True)
+arg.add_argument("--gene", nargs="+", type=str, required=True)
 arg.add_argument("--threshold", type=float, required=True)
 arg.add_argument("--species", type=int, default=9606)
 arg.add_argument("--network_type", type=str, default="functional")
