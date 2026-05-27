@@ -1,4 +1,3 @@
-from networkx.algorithms import graph_hashing
 import networkx as nx
 
 #in this function, the network graph is build from the interaction data we fetched from the STRING database
