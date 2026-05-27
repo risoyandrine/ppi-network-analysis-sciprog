@@ -168,7 +168,7 @@ def plot_GOenrich(go_data, output_png, top_n=10):
     return output_path
 
 def format_enrichment_label(description, category, max_length=58):
-    compact_description = " ".join(str(description).split())
-    if len(compact_description) > max_length:
-        compact_description = compact_description[: max_length - 3].rstrip() + "..."
-    return fill(f"{compact_description} [{category}]", width=42)
+    new_description = " ".join(str(description).split())
+    if len(new_description) > max_length:
+        new_description = new_description[: max_length - 3].rstrip() + "..."
+    return fill(f"{new_description} [{category}]", width=42)
