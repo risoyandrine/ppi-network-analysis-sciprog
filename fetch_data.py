@@ -1,7 +1,7 @@
 import requests 
 import pandas as pd
 
-#the function below will give us the interaction data from the STRING database, the parameters follows the STRING documentation 
+#fetch the interaction data from the STRING database, the parameters follows the STRING documentation 
 def fetch_string_data(gene, threshold, species, network_type, limit):
     url = "https://string-db.org/api/json/network"
 
@@ -23,7 +23,7 @@ def fetch_string_data(gene, threshold, species, network_type, limit):
         print(f"Error: Could not fetch data from STRING database: {response.status_code}")
         return None
 
-#to later perform the enrichment analysis, the hub proteins will be converted to their gene identifiers
+# for the enrichment analysis, the hub proteins are converted to their gene identifiers
 def fetch_gene_id(protein_list , species):
     url = "https://string-db.org/api/json/get_string_ids"
 
@@ -40,7 +40,7 @@ def fetch_gene_id(protein_list , species):
         print(f"Error: Could not fetch data Gene IDs: {response.status_code}")
         return None
 
-#this function will give the enrichment analysis by sending the previously identified hub proteins to the STRING database
+# get the enrichment analysis by sending the previously identified hub proteins to the STRING database
 def fetch_go_enrich(hub_proteins, species, background=None):
     url = "https://string-db.org/api/json/enrichment"
 

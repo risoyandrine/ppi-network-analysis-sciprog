@@ -5,13 +5,13 @@ from textwrap import fill
 import matplotlib.pyplot as plt
 import networkx as nx
 
-#this is to also let the user make the network graph without having the pyvis library as it is not really a standard library
+# let the user make the network graph without having the pyvis library as it is not really a standard library
 try:
     from pyvis.network import Network
 except ImportError:
     Network = None
 
-#setting the color palette for the network graph and the GO enrichment plot
+# setting the color palette for the network graph and the GO enrichment plot
 
 network_palette = {
     "hub": "lightcoral",
@@ -27,7 +27,7 @@ go_palette = {
     "Component": "deepskyblue",
 }
 
-# plotting the network involves both an interactive html file if pyvis is installed, and a standard static PPI network graph in a png form
+# as stated, plotting the network involves both an interactive html file if pyvis is installed, and a standard static PPI network graph in a png form
 
 def plot_network(graph, network_properties, output_path):
     outputs = []
@@ -40,7 +40,7 @@ def plot_network(graph, network_properties, output_path):
 
     return outputs
 
-#this function will give us the interactive graph and we use the pyvis library to create this using the hub proteins that has been defined previously and their network properties
+# get the interactive graph using the pyvis library to create this using the hub proteins that has been defined previously and their network properties
 def plot_network_interactive(graph, network_properties, output_path):
     net = Network(height="1200px", width="100%", bgcolor="oldlace", font_color="saddlebrown")
     net.from_nx(graph)
@@ -92,7 +92,7 @@ def plot_network_interactive(graph, network_properties, output_path):
         
     return output_path
 
-#this function is instead plotting the static network using standard matplotlib, networkx and the same hub proteins and network properties we found earlier 
+# get the static network using standard matplotlib, networkx and the same hub proteins and network properties we found earlier 
 def plot_network_static(graph, network_properties, output_path):
     degree = network_properties["degree"]
     hub_proteins = network_properties["hub_proteins"]
@@ -125,7 +125,7 @@ def plot_network_static(graph, network_properties, output_path):
     return output_path
 
 
-#this last function is to plot the enrichment analysis results we obtained for our network, again using matplotlib
+# plot the enrichment analysis results we obtained for our network, again using matplotlib
 def plot_GOenrich(go_data, output_png, top_n=10):
     if go_data is None or go_data.empty:
         raise ValueError("go_data must contain at least one enrichment result")
